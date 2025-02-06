@@ -22,7 +22,17 @@ app.set("view engine","ejs");
 app.use(express.static(path.join(process.cwd(),'public')));
 
 io.on("connection",(socket)=>{
-    console.log('connect');
+
+    // receiving the emitted lattitude and longitude
+    socket.on("send-location",(data)=>{
+        io.emit("receive-location", {id:socket.id,...data})
+    })
+    
+    // if user discconnet remove its marker from map
+    socket.on('disconnect',()=>{
+        io.emit("user-disconnect",socket.id)
+    })
+    console.log('user : '+socket.id)
 })
 
 app.get('/',(req,res)=>{
